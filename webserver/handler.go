@@ -1,4 +1,5 @@
 package webserver
+
 import (
 	"encoding/base64"
 	"github.com/Nrehearsal/go_captive_portal/authserver"
@@ -55,7 +56,6 @@ func NotFound404(c *gin.Context) {
 	var gwPort string
 	if gwSSLOn == "yes" {
 		originUrl = "https://" + originHost + originQuery
-		//originUrl = "http://" + originHost + originQuery
 		gwPort = gwHttpConf.SSLPort
 	} else {
 		originUrl = "http://" + originHost + originQuery
@@ -82,10 +82,12 @@ func Auth(c *gin.Context) {
 		return
 	}
 
+	/*
 	if stage == authserver.AUTH_STAGE_LOGOUT {
 		clientLogout(c)
 		return
 	}
+	*/
 
 BAD_REQUEST:
 	c.String(http.StatusBadRequest, "Bad Request")
@@ -101,17 +103,25 @@ func clientLogin(c *gin.Context) {
 		return
 	}
 
-	clientIP := c.ClientIP()
 	token := c.DefaultQuery(authserver.HTTP_QUERY_TOKEN, "")
-	clientMac := c.DefaultQuery(authserver.HTTP_QUERY_CLIENT_MAC, "")
 	originUrl := c.DefaultQuery(authserver.HTTP_QUERY_CLIENT_ORIGINAL_URL, "")
-
-	if token == "" || clientMac == "" {
+	if token == "" {
 		c.String(http.StatusBadRequest, "Bad Request")
 		return
 	}
 
-	err := authserver.VerifyToken(token, clientMac, clientIP, authserver.AUTH_STAGE_LOGIN)
+	/*
+	从新获取客户但的ip和mac防止中间人攻击。
+	 */
+	clientIP := c.ClientIP()
+	gwInfo := network.GetInterfaceInfo()
+	clientMac, err := network.GetMacOfIP(clientIP, gwInfo.Name)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Unknown Client")
+		return
+	}
+
+	accessDuration, err := authserver.VerifyToken(token, clientMac, clientIP, authserver.AUTH_STAGE_LOGIN)
 	if err != nil {
 		//token认证失败
 		//重定向到认证服务器的登陆页面
@@ -132,6 +142,8 @@ func clientLogin(c *gin.Context) {
 
 	//认证成功
 	//将通过验证的mac添加到白名单
+	log.Println(accessDuration)
+	//TODO add target into ipset with life duration
 	ipset.AddMacToSet(clientMac)
 
 	//重定向到认证服务器portal页面
@@ -141,6 +153,7 @@ func clientLogin(c *gin.Context) {
 	return
 }
 
+/*
 func clientLogout(c *gin.Context) {
 	foo, _ := c.Get("GatewaySSLOn")
 	//clientSSLOn.type = string, isSSL.value = "yes" or "no"
@@ -183,3 +196,4 @@ func clientLogout(c *gin.Context) {
 
 	return
 }
+*/

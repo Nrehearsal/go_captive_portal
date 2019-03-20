@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 const HTTP_QUERY_GW_ID = "gw_id"
@@ -42,15 +43,15 @@ var serverUrl ServerUrl
 
 type GetRequestFunc func(url string) ([]byte, error)
 
-var getRequest GetRequestFunc
+var doGetRequest GetRequestFunc
 
 func Init(authServer config.AuthServer) error {
 	SetServerUrl(authServer)
 
 	if authServer.SSLOn {
-		getRequest = httpsGetRequest
+		doGetRequest = httpsGetRequest
 	} else {
-		getRequest = httpGetRequest
+		doGetRequest = httpGetRequest
 	}
 
 	err := CheckStatus()
@@ -128,7 +129,7 @@ func SetServerUrl(AuthServer config.AuthServer) {
 }
 
 func CheckStatus() error {
-	data, err := getRequest(serverUrl.PingPage)
+	data, err := doGetRequest(serverUrl.PingPage)
 	if err != nil {
 		return err
 	}
@@ -140,20 +141,24 @@ func CheckStatus() error {
 	return nil
 }
 
-func VerifyToken(token, clientMac, clientIP, stage string) error {
+func VerifyToken(token, clientMac, clientIP, stage string) (int, error) {
 	authUrl := FillAuthPageParam(token, clientMac, clientIP, stage)
 	log.Println(authUrl)
 
-	data, err := getRequest(authUrl)
+	data, err := doGetRequest(authUrl)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	if string(data) != AUTH_SERVER_TOKEN_VALID {
-		return errors.New("token is invalid: " + string(data))
+	if string(data) == AUTH_SERVER_TOKEN_INVALID {
+		return 0, errors.New("token is invalid: " + string(data))
 	}
 
-	return nil
+	accessDuration, err := strconv.Atoi(string(data))
+	if err != nil {
+		return 0, err
+	}
+	return accessDuration, nil
 }
 
 func Update(config config.AuthServer) error {
