@@ -5,6 +5,7 @@ import "github.com/Nrehearsal/go_captive_portal/utils"
 var WIFIDOG_NG_MAC = "wifidog-ng-mac"
 var WIFIDOG_NG_IP = "wifidog-ng-ip"
 
+//4294967s = 60s * 60 * 24h * 49d = 49days
 var CREATE_IPSET_WIFIDOG_NG_MAC = []string{"ipset", "-!", "create", WIFIDOG_NG_MAC, "hash:mac", "timeout", "4294967"}
 var CREATE_IPSET_WIFIDOG_NG_IP = []string{"ipset", "-!", "create", WIFIDOG_NG_IP, "hash:ip"}
 
@@ -51,9 +52,15 @@ func DestroySetForIp() error {
 	return nil
 }
 
-func AddMacToSet(mac string) error {
+func AddMacToSet(mac string, userType int) error {
 	cmd := ADD_NEW_MAC_TO_IPSET
 	cmd = append(cmd, mac)
+
+	//guset uses is valid for 2 hours
+	//7200s = 60s * 60 * 2h = 2hour
+	if userType == 2 {
+		cmd = append(cmd, "7200")
+	}
 
 	err := utils.RunCommand(cmd...)
 	if err != nil {

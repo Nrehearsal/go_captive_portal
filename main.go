@@ -7,9 +7,7 @@ import (
 	"github.com/Nrehearsal/go_captive_portal/signal"
 	"github.com/Nrehearsal/go_captive_portal/webserver"
 	"log"
-	"time"
 )
-
 
 func main() {
 	log.SetFlags(log.Lshortfile | log.Ltime)
@@ -25,7 +23,6 @@ func main() {
 	gwHttpConf := config.GetGatewayHttp()
 	go webserver.Run(gwHttpConf)
 	//make sure the http service runs successfully
-	time.Sleep(5 * time.Second)
 
 	err = environment.Init()
 	if err != nil {

@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 const HTTP_QUERY_GW_ID = "gw_id"
@@ -29,8 +28,9 @@ const AUTH_STAGE_LOGOUT = "logout"
 
 const AUTH_SERVER_STATUS_NORMAL = "Pong"
 
-const AUTH_SERVER_TOKEN_VALID = "Auth: 1"
 const AUTH_SERVER_TOKEN_INVALID = "Auth: 0"
+const AUTH_SERVER_TOKEN_VALID_STANDARD_USER = "Auth: 1"
+const AUTH_SERVER_TOKEN_VALID_GUEST_USER = "Auth: 2"
 
 type ServerUrl struct {
 	PingPage   string
@@ -154,11 +154,15 @@ func VerifyToken(token, clientMac, clientIP, stage string) (int, error) {
 		return 0, errors.New("token is invalid: " + string(data))
 	}
 
-	accessDuration, err := strconv.Atoi(string(data))
-	if err != nil {
-		return 0, err
+	if string(data) == AUTH_SERVER_TOKEN_VALID_STANDARD_USER {
+		return 1, nil
 	}
-	return accessDuration, nil
+
+	if string(data) == AUTH_SERVER_TOKEN_VALID_GUEST_USER {
+		return 2, nil
+	}
+
+	return 0, errors.New("unknown error")
 }
 
 func Update(config config.AuthServer) error {

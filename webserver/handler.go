@@ -121,8 +121,8 @@ func clientLogin(c *gin.Context) {
 		return
 	}
 
-	accessDuration, err := authserver.VerifyToken(token, clientMac, clientIP, authserver.AUTH_STAGE_LOGIN)
-	if err != nil {
+	code, err := authserver.VerifyToken(token, clientMac, clientIP, authserver.AUTH_STAGE_LOGIN)
+	if err != nil || code <= 0 || code >= 3 {
 		//token认证失败
 		//重定向到认证服务器的登陆页面
 		gwInfo := network.GetInterfaceInfo()
@@ -142,9 +142,7 @@ func clientLogin(c *gin.Context) {
 
 	//认证成功
 	//将通过验证的mac添加到白名单
-	log.Println(accessDuration)
-	//TODO add target into ipset with life duration
-	ipset.AddMacToSet(clientMac)
+	ipset.AddMacToSet(clientMac, code)
 
 	//重定向到认证服务器portal页面
 	redirectUrl := authserver.FillPortalPageParam(clientMac, clientIP, originUrl)

@@ -15,6 +15,7 @@ func Init() error {
 	gwInfo, err := network.GatewayInit(cpConf.GatewayInterface)
 	if err != nil {
 		log.Println("网关接口初始化失败: ", err.Error())
+		return err
 	}
 	log.Println("网关接口初始化成功: ", gwInfo)
 
