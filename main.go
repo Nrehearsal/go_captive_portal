@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"github.com/Nrehearsal/go_captive_portal/config"
-	"github.com/Nrehearsal/go_captive_portal/environment"
 	"github.com/Nrehearsal/go_captive_portal/signal"
-	"github.com/Nrehearsal/go_captive_portal/webserver"
 	"log"
+	"github.com/Nrehearsal/go_captive_portal/webserver"
+	"github.com/Nrehearsal/go_captive_portal/environment"
 )
 
 func main() {
@@ -20,9 +20,14 @@ func main() {
 		return
 	}
 
+	done := make(chan bool)
 	gwHttpConf := config.GetGatewayHttp()
-	go webserver.Run(gwHttpConf)
 	//make sure the http service runs successfully
+	go func() {
+		go webserver.Run(gwHttpConf)
+		done <- true
+	}()
+	<-done
 
 	err = environment.Init()
 	if err != nil {
