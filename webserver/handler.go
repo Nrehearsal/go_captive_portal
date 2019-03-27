@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"github.com/Nrehearsal/wifi_auth/template"
+	"encoding/json"
 )
 
 func NotFound404(c *gin.Context) {
@@ -148,6 +150,56 @@ func clientLogin(c *gin.Context) {
 	redirectUrl := authserver.FillPortalPageParam(clientMac, clientIP, originUrl)
 	c.Redirect(http.StatusFound, redirectUrl)
 
+	return
+}
+
+func OnlineList(c *gin.Context) {
+	key := c.DefaultQuery("key", "")
+	if key == "" {
+		c.String(http.StatusForbidden, "Unauthorized")
+		return
+	}
+	url := authserver.FillOnlineListPageParam(key)
+
+	resp, err := authserver.DoGetRequest(url)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Unknown Error")
+		return
+	}
+
+	onlineUsers := &[]template.User{}
+	err = json.Unmarshal(resp, onlineUsers)
+	if err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "Invalid data")
+		return
+	}
+
+	c.JSON(http.StatusOK, onlineUsers)
+	return
+}
+
+func KickOutUser(c *gin.Context) {
+	key := c.DefaultQuery("key", "")
+	if key == "" {
+		c.String(http.StatusForbidden, "Unauthorized")
+		return
+	}
+	username := c.DefaultQuery("username", "")
+	if key == "" {
+		c.String(http.StatusBadRequest, "Bad Request")
+		return
+	}
+
+	url := authserver.FillKickOutUserPageParam(key, username)
+	resp, err := authserver.DoGetRequest(url)
+	if err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "Unknown Error")
+		return
+	}
+
+	c.String(http.StatusOK, string(resp))
 	return
 }
 

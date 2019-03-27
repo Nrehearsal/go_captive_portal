@@ -7,14 +7,16 @@ import (
 )
 
 type AuthServer struct {
-	Host       string `json:"host"`
-	Port       string `json:"port"`
-	SSLOn      bool   `json:"ssl_on"`
-	RootPath   string `json:"root_path"`
-	PingPath   string `json:"ping_path"`
-	LoginPath  string `json:"login_path"`
-	PortalPath string `json:"portal_path"`
-	AuthPath   string `json:"auth_path"`
+	Host            string `json:"host"`
+	Port            string `json:"port"`
+	SSLOn           bool   `json:"ssl_on"`
+	RootPath        string `json:"root_path"`
+	PingPath        string `json:"ping_path"`
+	LoginPath       string `json:"login_path"`
+	PortalPath      string `json:"portal_path"`
+	AuthPath        string `json:"auth_path"`
+	OnlineListPath  string `json:"online_list_path"`
+	KickOutUserPath string `json:"kick_out_user_path"`
 }
 
 type GatewayHttp struct {

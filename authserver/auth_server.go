@@ -17,6 +17,9 @@ const HTTP_QUERY_GW_SSL_ON = "gw_ssl_on"
 
 const HTTP_QUERY_TOKEN = "token"
 
+const HTTP_QUERY_KEY = "key"
+const HTTP_QUERY_USERNAME = "username"
+
 const HTTP_QUERY_CLIENT_IP = "ip"
 const HTTP_QUERY_CLIENT_MAC = "mac"
 const HTTP_QUERY_CLIENT_ORIGINAL_URL = "url"
@@ -33,25 +36,27 @@ const AUTH_SERVER_TOKEN_VALID_STANDARD_USER = "Auth: 1"
 const AUTH_SERVER_TOKEN_VALID_GUEST_USER = "Auth: 2"
 
 type ServerUrl struct {
-	PingPage   string
-	LoginPage  string
-	PortalPage string
-	AuthPage   string
+	PingPage        string
+	LoginPage       string
+	PortalPage      string
+	AuthPage        string
+	OnlineListPage  string
+	KickOutUserPage string
 }
 
 var serverUrl ServerUrl
 
 type GetRequestFunc func(url string) ([]byte, error)
 
-var doGetRequest GetRequestFunc
+var DoGetRequest GetRequestFunc
 
 func Init(authServer config.AuthServer) error {
 	SetServerUrl(authServer)
 
 	if authServer.SSLOn {
-		doGetRequest = httpsGetRequest
+		DoGetRequest = httpsGetRequest
 	} else {
-		doGetRequest = httpGetRequest
+		DoGetRequest = httpGetRequest
 	}
 
 	err := CheckStatus()
@@ -126,10 +131,12 @@ func SetServerUrl(AuthServer config.AuthServer) {
 	serverUrl.LoginPage = base + AuthServer.LoginPath
 	serverUrl.AuthPage = base + AuthServer.AuthPath
 	serverUrl.PortalPage = base + AuthServer.PortalPath
+	serverUrl.OnlineListPage = base + AuthServer.OnlineListPath
+	serverUrl.KickOutUserPage = base + AuthServer.KickOutUserPath
 }
 
 func CheckStatus() error {
-	data, err := doGetRequest(serverUrl.PingPage)
+	data, err := DoGetRequest(serverUrl.PingPage)
 	if err != nil {
 		return err
 	}
@@ -145,7 +152,7 @@ func VerifyToken(token, clientMac, clientIP, stage string) (int, error) {
 	authUrl := FillAuthPageParam(token, clientMac, clientIP, stage)
 	log.Println(authUrl)
 
-	data, err := doGetRequest(authUrl)
+	data, err := DoGetRequest(authUrl)
 	if err != nil {
 		return 0, err
 	}
@@ -196,5 +203,19 @@ func FillPortalPageParam(clientMac, clientIP, originUrl string) string {
 		clientIP, HTTP_QUERY_CLIENT_ORIGINAL_URL, originUrl,
 	)
 
+	return url
+}
+
+func FillOnlineListPageParam(key string) string {
+	url := fmt.Sprintf(`%s?%s=%s`,
+		serverUrl.OnlineListPage, HTTP_QUERY_KEY, key,
+	)
+	return url
+}
+
+func FillKickOutUserPageParam(key, username string) string {
+	url := fmt.Sprintf(`%s?%s=%s&%s=%s`,
+		serverUrl.OnlineListPage, HTTP_QUERY_KEY, key, HTTP_QUERY_USERNAME, username,
+	)
 	return url
 }

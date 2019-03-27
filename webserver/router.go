@@ -12,6 +12,8 @@ func Run(gwHttpConf config.GatewayHttp) {
 	router.Use(GatewaySSLOn())
 
 	router.GET("/auth", Auth)
+	router.GET("onlinelist", OnlineList)
+	router.GET("kickoutuser", KickOutUser)
 	router.NoRoute(NotFound404)
 
 	if gwHttpConf.SSLOn {
