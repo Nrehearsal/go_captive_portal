@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
+	"log"
+
 	"github.com/Nrehearsal/go_captive_portal/config"
 	"github.com/Nrehearsal/go_captive_portal/signal"
-	"log"
 	"github.com/Nrehearsal/go_captive_portal/webserver"
 	"github.com/Nrehearsal/go_captive_portal/environment"
 )

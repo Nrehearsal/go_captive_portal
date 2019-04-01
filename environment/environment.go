@@ -1,16 +1,23 @@
 package environment
 
 import (
-	"github.com/Nrehearsal/go_captive_portal/authserver"
 	"github.com/Nrehearsal/go_captive_portal/config"
 	"github.com/Nrehearsal/go_captive_portal/ipset"
-	"github.com/Nrehearsal/go_captive_portal/utils/network"
 	"github.com/Nrehearsal/go_captive_portal/wifidogkernel"
 	"log"
+	"github.com/Nrehearsal/go_captive_portal/authserver"
+	"github.com/Nrehearsal/go_captive_portal/utils/network"
 )
 
 func Init() error {
 	cpConf := config.GetCPConf()
+	var err error
+	err = authserver.Init(cpConf.AuthServer)
+	if err != nil {
+		log.Println("认证服务器初始化失败: ", err.Error())
+		return err
+	}
+	log.Println("认证服务器配置初始化成功: ", cpConf.AuthServer)
 
 	gwInfo, err := network.GatewayInit(cpConf.GatewayInterface)
 	if err != nil {
@@ -18,13 +25,6 @@ func Init() error {
 		return err
 	}
 	log.Println("网关接口初始化成功: ", gwInfo)
-
-	err = authserver.Init(cpConf.AuthServer)
-	if err != nil {
-		log.Println("认证服务器初始化失败: ", err.Error())
-		return err
-	}
-	log.Println("认证服务器配置初始化成功: ", cpConf.AuthServer)
 
 	err = ipset.Init()
 	if err != nil {

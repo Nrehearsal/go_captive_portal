@@ -1,13 +1,15 @@
 package authserver
 
 import (
+	"bytes"
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/Nrehearsal/go_captive_portal/config"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/Nrehearsal/go_captive_portal/config"
 )
 
 const HTTP_QUERY_GW_ID = "gw_id"
@@ -40,6 +42,7 @@ type ServerUrl struct {
 	LoginPage       string
 	PortalPage      string
 	AuthPage        string
+	AddUserPage     string
 	OnlineListPage  string
 	KickOutUserPage string
 }
@@ -47,16 +50,20 @@ type ServerUrl struct {
 var serverUrl ServerUrl
 
 type GetRequestFunc func(url string) ([]byte, error)
+type PostRequestFunc func(url string, data []byte) ([]byte, error)
 
 var DoGetRequest GetRequestFunc
+var DoPostRequest PostRequestFunc
 
 func Init(authServer config.AuthServer) error {
 	SetServerUrl(authServer)
 
 	if authServer.SSLOn {
 		DoGetRequest = httpsGetRequest
+		DoPostRequest = httpsPostRequest
 	} else {
 		DoGetRequest = httpGetRequest
+		DoPostRequest = httpPostRequest
 	}
 
 	err := CheckStatus()
@@ -113,6 +120,71 @@ func httpGetRequest(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
+
+	return body, nil
+}
+
+func httpsPostRequest(url string, data []byte) ([]byte, error) {
+	tr := http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	client := http.Client{
+		Transport: &tr,
+	}
+
+	var buffer *bytes.Buffer
+	if data != nil {
+		buffer = bytes.NewBuffer(data)
+	} else {
+		buffer = nil
+	}
+
+	req, err := http.NewRequest("POST", url, buffer)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	return body, nil
+}
+
+func httpPostRequest(url string, data []byte) ([]byte, error) {
+	client := http.Client{}
+
+	var buffer *bytes.Buffer
+	if data != nil {
+		buffer = bytes.NewBuffer(data)
+	} else {
+		buffer = nil
+	}
+
+	req, err := http.NewRequest("POST", url, buffer)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	defer resp.Body.Close()
 
@@ -131,6 +203,7 @@ func SetServerUrl(AuthServer config.AuthServer) {
 	serverUrl.LoginPage = base + AuthServer.LoginPath
 	serverUrl.AuthPage = base + AuthServer.AuthPath
 	serverUrl.PortalPage = base + AuthServer.PortalPath
+	serverUrl.AddUserPage = base + AuthServer.AddUserPath
 	serverUrl.OnlineListPage = base + AuthServer.OnlineListPath
 	serverUrl.KickOutUserPage = base + AuthServer.KickOutUserPath
 }
@@ -206,6 +279,13 @@ func FillPortalPageParam(clientMac, clientIP, originUrl string) string {
 	return url
 }
 
+func FillAddUserPageParam(key string) string {
+	url := fmt.Sprintf(`%s?%s=%s`,
+		serverUrl.AddUserPage, HTTP_QUERY_KEY, key,
+	)
+	return url
+}
+
 func FillOnlineListPageParam(key string) string {
 	url := fmt.Sprintf(`%s?%s=%s`,
 		serverUrl.OnlineListPage, HTTP_QUERY_KEY, key,
@@ -213,9 +293,9 @@ func FillOnlineListPageParam(key string) string {
 	return url
 }
 
-func FillKickOutUserPageParam(key, username string) string {
-	url := fmt.Sprintf(`%s?%s=%s&%s=%s`,
-		serverUrl.OnlineListPage, HTTP_QUERY_KEY, key, HTTP_QUERY_USERNAME, username,
+func FillKickOutUserPageParam(key, username, mac string) string {
+	url := fmt.Sprintf(`%s?%s=%s&%s=%s&%s=%s`,
+		serverUrl.KickOutUserPage, HTTP_QUERY_KEY, key, HTTP_QUERY_USERNAME, username, HTTP_QUERY_CLIENT_MAC, mac,
 	)
 	return url
 }

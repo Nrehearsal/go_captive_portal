@@ -15,8 +15,9 @@ type AuthServer struct {
 	LoginPath       string `json:"login_path"`
 	PortalPath      string `json:"portal_path"`
 	AuthPath        string `json:"auth_path"`
+	AddUserPath     string `json:"add_user_path"`
 	OnlineListPath  string `json:"online_list_path"`
-	KickOutUserPath string `json:"kick_out_user_path"`
+	KickOutUserPath string `json:"kickout_user_path"`
 }
 
 type GatewayHttp struct {

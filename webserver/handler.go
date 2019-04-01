@@ -2,15 +2,15 @@ package webserver
 
 import (
 	"encoding/base64"
+	"encoding/json"
+	"log"
+	"net/http"
 	"github.com/Nrehearsal/go_captive_portal/authserver"
 	"github.com/Nrehearsal/go_captive_portal/config"
 	"github.com/Nrehearsal/go_captive_portal/ipset"
 	"github.com/Nrehearsal/go_captive_portal/utils/network"
-	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
 	"github.com/Nrehearsal/wifi_auth/template"
-	"encoding/json"
+	"github.com/gin-gonic/gin"
 )
 
 func NotFound404(c *gin.Context) {
@@ -85,10 +85,10 @@ func Auth(c *gin.Context) {
 	}
 
 	/*
-	if stage == authserver.AUTH_STAGE_LOGOUT {
-		clientLogout(c)
-		return
-	}
+		if stage == authserver.AUTH_STAGE_LOGOUT {
+			clientLogout(c)
+			return
+		}
 	*/
 
 BAD_REQUEST:
@@ -113,8 +113,8 @@ func clientLogin(c *gin.Context) {
 	}
 
 	/*
-	从新获取客户但的ip和mac防止中间人攻击。
-	 */
+		从新获取客户但的ip和mac防止中间人攻击。
+	*/
 	clientIP := c.ClientIP()
 	gwInfo := network.GetInterfaceInfo()
 	clientMac, err := network.GetMacOfIP(clientIP, gwInfo.Name)
@@ -153,6 +153,39 @@ func clientLogin(c *gin.Context) {
 	return
 }
 
+func AddUser(c *gin.Context) {
+	key := c.DefaultQuery("key", "")
+	if key == "" {
+		c.String(http.StatusForbidden, "Unauthorized")
+		return
+	}
+
+	user := template.User{}
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.String(http.StatusForbidden, "Unauthorized")
+		return
+	}
+
+	data, err := json.Marshal(user)
+	if err != nil {
+		c.String(http.StatusBadRequest, "Bad Request")
+		return
+	}
+
+	url := authserver.FillAddUserPageParam(key)
+	log.Println(url)
+
+	resp, err := authserver.DoPostRequest(url, data)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Unknown Error")
+		return
+	}
+
+	c.String(http.StatusOK, string(resp))
+	return
+}
+
 func OnlineList(c *gin.Context) {
 	key := c.DefaultQuery("key", "")
 	if key == "" {
@@ -186,22 +219,49 @@ func KickOutUser(c *gin.Context) {
 		return
 	}
 	username := c.DefaultQuery("username", "")
-	if key == "" {
+	if username == "" {
 		c.String(http.StatusBadRequest, "Bad Request")
 		return
 	}
+	mac := c.DefaultQuery("mac", "")
+	if mac == "" {
+		c.String(http.StatusBadGateway, "Bad Request")
+		return
+	}
 
-	url := authserver.FillKickOutUserPageParam(key, username)
-	resp, err := authserver.DoGetRequest(url)
+	url := authserver.FillKickOutUserPageParam(key, username, mac)
+	resp, err := authserver.DoPostRequest(url, nil)
 	if err != nil {
 		log.Println(err)
 		c.String(http.StatusInternalServerError, "Unknown Error")
 		return
 	}
 
+	//Remove user from ipset
+	ipset.DeleteMacFromSet(mac)
+
 	c.String(http.StatusOK, string(resp))
 	return
 }
+
+/*
+func AddUserProxy() gin.HandlerFunc {
+	target := "localhost:9000"
+	return func(c *gin.Context) {
+		director := func(req *http.Request) {
+			r := c.Request
+			req = r
+			req.URL.Scheme = "http"
+			req.URL.Host = target
+			req.Header["my-header"] = []string{r.Header.Get("my-header")}
+			// Golang camelcases headers
+			delete(req.Header, "My-Header")
+		}
+		proxy := &httputil.ReverseProxy{Director: director}
+		proxy.ServeHTTP(c.Writer, c.Request)
+	}
+}
+*/
 
 /*
 func clientLogout(c *gin.Context) {

@@ -1,22 +1,23 @@
 {
-  "gateway_interface": "ens160",
-  "gateway_http": {
-    "port": "8081",
-    "ssl_on": true,
-    "ssl_port": "8443",
-    "ssl_crt": "ssl.crt",
-    "ssl_key": "ssl.key"
-  },
-  "auth_server": {
-    "host": "127.0.0.1",
-    "port": "2060",
-    "ssl_on": false,
-    "root_path": "/",
-    "login_path": "login",
-    "portal_path": "portal",
-    "auth_path": "auth",
-    "ping_path": "ping",
-    "online_list_path": "onlinelist",
-    "kick_out_user_path": "kickout"
-  }
+	"gateway_interface": "ens160",
+	"gateway_http": {
+		"port": "8081",
+		"ssl_on": true,
+		"ssl_port": "8443",
+		"ssl_crt": "ssl.crt",
+		"ssl_key": "ssl.key"
+	},
+	"auth_server": {
+		"host": "127.0.0.1",
+		"port": "9000",
+		"ssl_on": false,
+		"root_path": "/",
+		"login_path": "login",
+		"portal_path": "portal",
+		"auth_path": "auth",
+		"ping_path": "ping",
+		"add_user_path":"adduser",
+		"online_list_path": "onlinelist",
+		"kickout_user_path": "kickout"
+	}
 }

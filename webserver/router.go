@@ -12,8 +12,16 @@ func Run(gwHttpConf config.GatewayHttp) {
 	router.Use(GatewaySSLOn())
 
 	router.GET("/auth", Auth)
-	router.GET("onlinelist", OnlineList)
-	router.GET("kickoutuser", KickOutUser)
+	router.POST("/adduser", AddUser)
+	router.GET("/onlinelist", OnlineList)
+	router.GET("/kickoutuser", KickOutUser)
+
+	/*
+	router.GET("/onlinelist", OnlineListProxy)
+	router.POST("/kickouter", KickOutUserProxy)
+	router.POST("/adduser", AddUserProxy())
+	*/
+
 	router.NoRoute(NotFound404)
 
 	if gwHttpConf.SSLOn {
