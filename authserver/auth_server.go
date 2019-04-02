@@ -74,7 +74,7 @@ func Init(authServer config.AuthServer) error {
 		return err
 	}
 
-	RestoreOnlineUser()
+	//RestoreOnlineUser()
 	return nil
 }
 
@@ -304,27 +304,24 @@ func FillKickOutUserPageParam(key, username, mac string) string {
 	return url
 }
 
-func RestoreOnlineUser() {
+func RestoreOnlineUser() error {
 	authServerConf := config.GetAuthServer()
 	url := FillOnlineListPageParam(authServerConf.Key)
 
 	resp, err := DoGetRequest(url)
 	if err != nil {
-		//c.String(http.StatusInternalServerError, "Unknown Error")
-		log.Println("恢复在线用户状态失败: ", err)
-		return
+		return err
 	}
 
 	onlineUsers := &[]template.OnlineUser{}
 	err = json.Unmarshal(resp, onlineUsers)
 	if err != nil {
-		log.Println("恢复在线用户状态失败: ", err)
-		return
+		return err
 	}
 
 	for _, v := range *onlineUsers {
 		ipset.AddMacToSet(v.Mac, v.Level)
 	}
 
-	log.Println("恢复在线用户状态成功")
+	return nil
 }

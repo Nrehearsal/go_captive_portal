@@ -47,6 +47,13 @@ func Init() error {
 	}
 	log.Println("wifidog-ng内核模块初始化成功")
 
+	err = authserver.RestoreOnlineUser()
+	if err != nil {
+		log.Println("恢复在线用户状态失败", err.Error())
+	} else {
+		log.Println("恢复在线用户状态成功")
+	}
+
 	log.Println("运行环境初始化完毕")
 	return nil
 }
