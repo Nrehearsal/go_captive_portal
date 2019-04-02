@@ -10,6 +10,9 @@ import (
 	"net/http"
 
 	"github.com/Nrehearsal/go_captive_portal/config"
+	"github.com/Nrehearsal/go_captive_portal/template"
+	"encoding/json"
+	"github.com/Nrehearsal/go_captive_portal/ipset"
 )
 
 const HTTP_QUERY_GW_ID = "gw_id"
@@ -71,6 +74,7 @@ func Init(authServer config.AuthServer) error {
 		return err
 	}
 
+	RestoreOnlineUser()
 	return nil
 }
 
@@ -298,4 +302,29 @@ func FillKickOutUserPageParam(key, username, mac string) string {
 		serverUrl.KickOutUserPage, HTTP_QUERY_KEY, key, HTTP_QUERY_USERNAME, username, HTTP_QUERY_CLIENT_MAC, mac,
 	)
 	return url
+}
+
+func RestoreOnlineUser() {
+	authServerConf := config.GetAuthServer()
+	url := FillOnlineListPageParam(authServerConf.Key)
+
+	resp, err := DoGetRequest(url)
+	if err != nil {
+		//c.String(http.StatusInternalServerError, "Unknown Error")
+		log.Println("恢复在线用户状态失败: ", err)
+		return
+	}
+
+	onlineUsers := &[]template.OnlineUser{}
+	err = json.Unmarshal(resp, onlineUsers)
+	if err != nil {
+		log.Println("恢复在线用户状态失败: ", err)
+		return
+	}
+
+	for _, v := range *onlineUsers {
+		ipset.AddMacToSet(v.Mac, v.Level)
+	}
+
+	log.Println("恢复在线用户状态成功")
 }

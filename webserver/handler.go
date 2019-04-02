@@ -9,9 +9,10 @@ import (
 	"github.com/Nrehearsal/go_captive_portal/config"
 	"github.com/Nrehearsal/go_captive_portal/ipset"
 	"github.com/Nrehearsal/go_captive_portal/utils/network"
-	"github.com/Nrehearsal/wifi_auth/template"
+	"github.com/Nrehearsal/go_captive_portal/template"
 	"github.com/gin-gonic/gin"
 )
+
 
 func NotFound404(c *gin.Context) {
 	method := c.Request.Method
@@ -186,7 +187,7 @@ func AddUser(c *gin.Context) {
 	return
 }
 
-func OnlineList(c *gin.Context) {
+func OnlineUserList(c *gin.Context) {
 	key := c.DefaultQuery("key", "")
 	if key == "" {
 		c.String(http.StatusForbidden, "Unauthorized")
@@ -200,7 +201,7 @@ func OnlineList(c *gin.Context) {
 		return
 	}
 
-	onlineUsers := &[]template.User{}
+	onlineUsers := &[]template.OnlineUser{}
 	err = json.Unmarshal(resp, onlineUsers)
 	if err != nil {
 		log.Println(err)

@@ -10,6 +10,7 @@
 	"auth_server": {
 		"host": "127.0.0.1",
 		"port": "9000",
+		"key": "c16cbe118a80436b5b6fe3eb15ffc37d",
 		"ssl_on": false,
 		"root_path": "/",
 		"login_path": "login",

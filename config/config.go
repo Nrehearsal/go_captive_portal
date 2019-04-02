@@ -10,6 +10,7 @@ type AuthServer struct {
 	Host            string `json:"host"`
 	Port            string `json:"port"`
 	SSLOn           bool   `json:"ssl_on"`
+	Key             string `json:"key"`
 	RootPath        string `json:"root_path"`
 	PingPath        string `json:"ping_path"`
 	LoginPath       string `json:"login_path"`

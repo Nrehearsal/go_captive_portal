@@ -13,14 +13,8 @@ func Run(gwHttpConf config.GatewayHttp) {
 
 	router.GET("/auth", Auth)
 	router.POST("/adduser", AddUser)
-	router.GET("/onlinelist", OnlineList)
+	router.GET("/onlinelist", OnlineUserList)
 	router.GET("/kickoutuser", KickOutUser)
-
-	/*
-	router.GET("/onlinelist", OnlineListProxy)
-	router.POST("/kickouter", KickOutUserProxy)
-	router.POST("/adduser", AddUserProxy())
-	*/
 
 	router.NoRoute(NotFound404)
 
