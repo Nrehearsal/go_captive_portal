@@ -1,12 +1,12 @@
 package environment
 
 import (
-	"github.com/Nrehearsal/go_captive_portal/config"
-	"github.com/Nrehearsal/go_captive_portal/ipset"
-	"github.com/Nrehearsal/go_captive_portal/wifidogkernel"
+	"go_captive_portal/authserver"
+	"go_captive_portal/config"
+	"go_captive_portal/ipset"
+	"go_captive_portal/utils/network"
+	"go_captive_portal/wifidogkernel"
 	"log"
-	"github.com/Nrehearsal/go_captive_portal/authserver"
-	"github.com/Nrehearsal/go_captive_portal/utils/network"
 )
 
 func Init() error {

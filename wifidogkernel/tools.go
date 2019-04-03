@@ -1,7 +1,7 @@
 package wifidogkernel
 
 import (
-	"github.com/Nrehearsal/go_captive_portal/utils"
+	"go_captive_portal/utils"
 	"io/ioutil"
 )
 

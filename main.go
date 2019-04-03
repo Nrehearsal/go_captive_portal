@@ -4,10 +4,10 @@ import (
 	"flag"
 	"log"
 
-	"github.com/Nrehearsal/go_captive_portal/config"
-	"github.com/Nrehearsal/go_captive_portal/signal"
-	"github.com/Nrehearsal/go_captive_portal/webserver"
-	"github.com/Nrehearsal/go_captive_portal/environment"
+	"go_captive_portal/config"
+	"go_captive_portal/environment"
+	"go_captive_portal/signal"
+	"go_captive_portal/webserver"
 )
 
 func main() {

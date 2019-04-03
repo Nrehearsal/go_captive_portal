@@ -1,6 +1,6 @@
 package ipset
 
-import "github.com/Nrehearsal/go_captive_portal/utils"
+import "go_captive_portal/utils"
 
 var WIFIDOG_NG_MAC = "wifidog-ng-mac"
 var WIFIDOG_NG_IP = "wifidog-ng-ip"

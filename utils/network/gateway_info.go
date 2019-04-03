@@ -1,7 +1,7 @@
 package network
 
 import (
-	"github.com/Nrehearsal/go_captive_portal/utils"
+	"go_captive_portal/utils"
 )
 
 type GatewayInterfaceInfo struct {

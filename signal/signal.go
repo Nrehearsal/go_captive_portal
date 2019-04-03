@@ -1,7 +1,7 @@
 package signal
 
 import (
-	"github.com/Nrehearsal/go_captive_portal/environment"
+	"go_captive_portal/environment"
 	"log"
 	"os"
 	"os/signal"

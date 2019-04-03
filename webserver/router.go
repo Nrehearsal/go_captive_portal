@@ -1,7 +1,8 @@
 package webserver
 
 import (
-	"github.com/Nrehearsal/go_captive_portal/config"
+	"go_captive_portal/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
 )

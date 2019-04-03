@@ -9,10 +9,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Nrehearsal/go_captive_portal/config"
-	"github.com/Nrehearsal/go_captive_portal/template"
 	"encoding/json"
-	"github.com/Nrehearsal/go_captive_portal/ipset"
+	"go_captive_portal/config"
+	"go_captive_portal/ipset"
+	"go_captive_portal/template"
 )
 
 const HTTP_QUERY_GW_ID = "gw_id"

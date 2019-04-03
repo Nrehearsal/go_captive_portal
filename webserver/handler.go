@@ -3,16 +3,16 @@ package webserver
 import (
 	"encoding/base64"
 	"encoding/json"
+	"go_captive_portal/authserver"
+	"go_captive_portal/config"
+	"go_captive_portal/ipset"
+	"go_captive_portal/template"
+	"go_captive_portal/utils/network"
 	"log"
 	"net/http"
-	"github.com/Nrehearsal/go_captive_portal/authserver"
-	"github.com/Nrehearsal/go_captive_portal/config"
-	"github.com/Nrehearsal/go_captive_portal/ipset"
-	"github.com/Nrehearsal/go_captive_portal/utils/network"
-	"github.com/Nrehearsal/go_captive_portal/template"
+
 	"github.com/gin-gonic/gin"
 )
-
 
 func NotFound404(c *gin.Context) {
 	method := c.Request.Method
