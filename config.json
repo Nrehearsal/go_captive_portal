@@ -1,5 +1,5 @@
 {
-	"gateway_interface": "ens160",
+	"gateway_interface": "ens33",
 	"gateway_http": {
 		"port": "8081",
 		"ssl_on": true,
@@ -8,7 +8,7 @@
 		"ssl_key": "ssl.key"
 	},
 	"auth_server": {
-		"host": "127.0.0.1",
+		"host": "192.168.145.128",
 		"port": "9000",
 		"key": "c16cbe118a80436b5b6fe3eb15ffc37d",
 		"ssl_on": false,
