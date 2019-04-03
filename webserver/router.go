@@ -15,7 +15,7 @@ func Run(gwHttpConf config.GatewayHttp) {
 	router.GET("/auth", Auth)
 	router.POST("/adduser", AddUser)
 	router.GET("/onlinelist", OnlineUserList)
-	router.GET("/kickoutuser", KickOutUser)
+	router.GET("/kickout", KickOutUser)
 
 	router.NoRoute(NotFound404)
 

@@ -140,13 +140,15 @@ func httpsPostRequest(url string, data []byte) ([]byte, error) {
 	}
 
 	var buffer *bytes.Buffer
+	var req *http.Request
+	var err error
+
 	if data != nil {
-		buffer = bytes.NewBuffer(data)
+		req, err = http.NewRequest("POST", url, buffer)
 	} else {
-		buffer = nil
+		req, err = http.NewRequest("POST", url, nil)
 	}
 
-	req, err := http.NewRequest("POST", url, buffer)
 	if err != nil {
 		return nil, err
 	}
@@ -170,13 +172,15 @@ func httpPostRequest(url string, data []byte) ([]byte, error) {
 	client := http.Client{}
 
 	var buffer *bytes.Buffer
+	var req *http.Request
+	var err error
+
 	if data != nil {
-		buffer = bytes.NewBuffer(data)
+		req, err = http.NewRequest("POST", url, buffer)
 	} else {
-		buffer = nil
+		req, err = http.NewRequest("POST", url, nil)
 	}
 
-	req, err := http.NewRequest("POST", url, buffer)
 	if err != nil {
 		return nil, err
 	}
