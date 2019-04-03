@@ -1,6 +1,9 @@
 package ipset
 
-import "go_captive_portal/utils"
+import (
+	"go_captive_portal/utils"
+	"strconv"
+)
 
 var WIFIDOG_NG_MAC = "wifidog-ng-mac"
 var WIFIDOG_NG_IP = "wifidog-ng-ip"
@@ -61,6 +64,22 @@ func AddMacToSet(mac string, userType int) error {
 	if userType == 2 {
 		cmd = append(cmd, "7200")
 	}
+
+	err := utils.RunCommand(cmd...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AddMacToSetWithTimeout(mac string, timeout int64) error {
+	cmd := ADD_NEW_MAC_TO_IPSET
+	cmd = append(cmd, mac)
+
+	//guset uses is valid for 2 hours
+	//7200s = 60s * 60 * 2h = 2hour
+	timeoutStr := strconv.FormatInt(timeout, 10)
+	cmd = append(cmd, "timeout", timeoutStr)
 
 	err := utils.RunCommand(cmd...)
 	if err != nil {

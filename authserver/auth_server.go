@@ -13,6 +13,7 @@ import (
 	"go_captive_portal/config"
 	"go_captive_portal/ipset"
 	"go_captive_portal/template"
+	"time"
 )
 
 const HTTP_QUERY_GW_ID = "gw_id"
@@ -320,7 +321,12 @@ func RestoreOnlineUser() error {
 	}
 
 	for _, v := range *onlineUsers {
-		ipset.AddMacToSet(v.Mac, v.Level)
+		leftTime := v.ExpiredTimeStamp - time.Now().Unix()
+		if leftTime <= 0 {
+			continue
+		}
+		log.Println(v.Mac, leftTime)
+		ipset.AddMacToSetWithTimeout(v.Mac, leftTime)
 	}
 
 	return nil
