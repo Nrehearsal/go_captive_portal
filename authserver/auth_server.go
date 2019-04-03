@@ -171,12 +171,11 @@ func httpsPostRequest(url string, data []byte) ([]byte, error) {
 func httpPostRequest(url string, data []byte) ([]byte, error) {
 	client := http.Client{}
 
-	var buffer *bytes.Buffer
 	var req *http.Request
 	var err error
 
 	if data != nil {
-		req, err = http.NewRequest("POST", url, buffer)
+		req, err = http.NewRequest("POST", url, bytes.NewBuffer(data))
 	} else {
 		req, err = http.NewRequest("POST", url, nil)
 	}
