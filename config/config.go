@@ -31,6 +31,7 @@ type GatewayHttp struct {
 
 type CaptiveService struct {
 	GatewayInterface string      `json:"gateway_interface"`
+	WhiteIpList      []string    `json:"white_ip_list"`
 	GWHttp           GatewayHttp `json:"gateway_http"`
 	AuthServer       AuthServer  `json:"auth_server"`
 }
@@ -58,6 +59,10 @@ func GetGatewayHttp() GatewayHttp {
 
 func GetAuthServer() AuthServer {
 	return cpconf.AuthServer
+}
+
+func GetWhiteIpList() []string {
+	return cpconf.WhiteIpList
 }
 
 func GetCPConf() CaptiveService {

@@ -1,24 +1,39 @@
 {
-	"gateway_interface": "ens33",
-	"gateway_http": {
-		"port": "8081",
-		"ssl_on": true,
-		"ssl_port": "8443",
-		"ssl_crt": "ssl.crt",
-		"ssl_key": "ssl.key"
-	},
-	"auth_server": {
-		"host": "192.168.145.128",
-		"port": "9000",
-		"key": "c16cbe118a80436b5b6fe3eb15ffc37d",
-		"ssl_on": false,
-		"root_path": "/",
-		"login_path": "login",
-		"portal_path": "portal",
-		"auth_path": "auth",
-		"ping_path": "ping",
-		"add_user_path":"adduser",
-		"online_list_path": "onlinelist",
-		"kickout_user_path": "kickout"
-	}
+  "gateway_interface": "ens33",
+  "white_ip_list": [
+    "114.114.114.114",
+    "114.114.114.115",
+    "1.2.4.8",
+    "202.98.0.6",
+    "119.29.29.29",
+    "182.254.116.116",
+    "223.5.5.5",
+    "223.6.6.6",
+    "182.254.116.116",
+    "1.1.1.1",
+    "1.0.0.1",
+    "8.8.8.8",
+    "8.8.4.4"
+  ],
+  "gateway_http": {
+    "port": "8081",
+    "ssl_on": true,
+    "ssl_port": "8443",
+    "ssl_crt": "ssl.crt",
+    "ssl_key": "ssl.key"
+  },
+  "auth_server": {
+    "host": "192.168.145.128",
+    "port": "9000",
+    "key": "c16cbe118a80436b5b6fe3eb15ffc37d",
+    "ssl_on": false,
+    "root_path": "/",
+    "login_path": "login",
+    "portal_path": "portal",
+    "auth_path": "auth",
+    "ping_path": "ping",
+    "add_user_path": "adduser",
+    "online_list_path": "onlinelist",
+    "kickout_user_path": "kickout"
+  }
 }

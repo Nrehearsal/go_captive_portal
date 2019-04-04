@@ -40,8 +40,15 @@ func InitWhiteList() error {
 	}
 
 ADD_AUTH_SERVER_IP_TO_SET:
-	//将认证服务器的ip添加到ipset的白名单
+	//add white ip list to ipset
 	AddIpToSet(authServerIP)
+
+	gwInfo := network.GetInterfaceInfo()
+	AddIpToSet(gwInfo.IP)
+	whiteIpList := config.GetWhiteIpList()
+	for _, ip := range whiteIpList {
+		AddIpToSet(ip)
+	}
 
 	return nil
 }
