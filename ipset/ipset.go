@@ -43,7 +43,6 @@ ADD_AUTH_SERVER_IP_TO_SET:
 	//将认证服务器的ip添加到ipset的白名单
 	AddIpToSet(authServerIP)
 
-	//TODO get whitelist from file
 	return nil
 }
 
