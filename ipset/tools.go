@@ -62,7 +62,7 @@ func AddMacToSet(mac string, userType int) error {
 	//guset uses is valid for 2 hours
 	//7200s = 60s * 60 * 2h = 2hour
 	if userType == 2 {
-		cmd = append(cmd, "7200")
+		cmd = append(cmd, "timeout", "7200")
 	}
 
 	err := utils.RunCommand(cmd...)
